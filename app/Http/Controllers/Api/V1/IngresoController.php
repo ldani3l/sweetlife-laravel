@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Ingreso;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+
 
 class IngresoController extends Controller
 {
@@ -15,7 +17,18 @@ class IngresoController extends Controller
      */
     public function index()
     {
-        //
+        $now = date('Y-m-d H:i:s');
+        $NuevaFecha = strtotime ( '-3 hour' , strtotime ($now) ) ;
+        $NuevaFecha = strtotime ( '0 minute' , $NuevaFecha ) ;
+        $NuevaFecha = strtotime ( '0 second' , $NuevaFecha ) ;
+        $treshoras = date ( 'Y-m-d H:i:s' , $NuevaFecha);
+        #return $treshoras."-".$now;
+        return Ingreso::whereBetween('created_at', [$treshoras, $now])->get();
+    }
+    public function horas24()
+    {
+        #return Ingreso::all();
+        return Ingreso::whereDate('created_at', Carbon::today())->get();
     }
 
     /**
@@ -26,7 +39,10 @@ class IngresoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $i =  new Ingreso();
+        $i->cantidad = $request->cantidad;
+        //$i->created_at = $request->created_at;
+        $i->save();
     }
 
     /**
